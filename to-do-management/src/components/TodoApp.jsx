@@ -3,9 +3,66 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, CheckCircle2, Circle, ListTodo, Calendar, Trash, LogOut, User } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import Auth from "./Auth";
+
+const BackgroundDecoration = () => {
+    const [mounted, setMounted] = useState(false);
+    const [positions, setPositions] = useState([]);
+    const emojis = ["📚", "📖", "📝", "🎓", "💻", "🧠", "🎒", "✏️", "🎨", "🔬"];
+
+    useEffect(() => {
+        setMounted(true);
+        const newPositions = [...Array(15)].map(() => ({
+            left: Math.random() * 90 + 5 + "vw",
+            top: Math.random() * 90 + 5 + "vh",
+            emoji: emojis[Math.floor(Math.random() * emojis.length)],
+            delay: Math.random() * 5,
+            duration: 10 + Math.random() * 15,
+            scale: 0.5 + Math.random() * 1
+        }));
+        setPositions(newPositions);
+    }, []);
+
+    if (!mounted) return null;
+
+    return (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+            {positions.map((pos, i) => (
+                <motion.div
+                    key={i}
+                    initial={{
+                        opacity: 0,
+                        scale: 0,
+                        x: 0,
+                        y: 0
+                    }}
+                    animate={{
+                        opacity: [0, 0.4, 0.4, 0],
+                        scale: [pos.scale, pos.scale * 1.2, pos.scale],
+                        y: [0, -30, 30, 0],
+                        x: [0, 20, -20, 0]
+                    }}
+                    transition={{
+                        duration: pos.duration,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: pos.delay
+                    }}
+                    className="absolute text-5xl select-none"
+                    style={{
+                        left: pos.left,
+                        top: pos.top,
+                    }}
+                >
+                    {pos.emoji}
+                </motion.div>
+            ))}
+        </div>
+    );
+};
 
 export default function TodoApp() {
     const [session, setSession] = useState(null);
@@ -152,23 +209,30 @@ export default function TodoApp() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#f0f9ff]">
+            <div className="min-h-screen flex items-center justify-center bg-[#f0f9ff] relative overflow-hidden">
+                <BackgroundDecoration />
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 >
-                    <ListTodo size={40} className="text-indigo-600 opacity-20" />
+                    <Image src="/logo.png" alt="Logo" width={60} height={30} className="opacity-20" />
                 </motion.div>
             </div>
         );
     }
 
     if (!session) {
-        return <Auth />;
+        return (
+            <div className="relative min-h-screen bg-[#f0f9ff] overflow-hidden">
+                <BackgroundDecoration />
+                <Auth />
+            </div>
+        );
     }
 
     return (
-        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-[#f0f9ff] text-slate-900 flex flex-col items-center">
+        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-[#f0f9ff] text-slate-900 flex flex-col items-center overflow-x-hidden relative">
+            <BackgroundDecoration />
             {/* User Status Bar */}
             <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -208,7 +272,7 @@ export default function TodoApp() {
                                     transition={{ delay: 0.2, duration: 0.8 }}
                                     className="inline-block p-4 rounded-3xl bg-indigo-500/10 ring-1 ring-indigo-500/20 mb-2"
                                 >
-                                    <ListTodo size={64} className="text-indigo-600" />
+                                    <Image src="/logo.png" alt="Logo" width={180} height={90} priority />
                                 </motion.div>
                                 <h1 className="text-5xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 py-2">
                                     Welcome to <br /> Todo Management
@@ -251,7 +315,7 @@ export default function TodoApp() {
                             {/* Header Section */}
                             <header className="mb-10 text-center">
                                 <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-indigo-500/10 text-indigo-600 ring-1 ring-indigo-500/20">
-                                    <ListTodo size={32} />
+                                    <Image src="/logo.png" alt="Logo" width={100} height={50} />
                                 </div>
                                 <h1 className="text-4xl font-bold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-600">
                                     Quest Log

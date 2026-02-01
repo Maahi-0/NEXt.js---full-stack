@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { LogIn, UserPlus, Mail, Lock, Loader2, ListTodo } from "lucide-react";
+import Image from "next/image";
 
 export default function Auth() {
     const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ export default function Auth() {
             >
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-indigo-500/10 text-indigo-600 ring-1 ring-indigo-500/20">
-                        <ListTodo size={40} />
+                        <Image src="/logo.png" alt="Logo" width={100} height={50} priority />
                     </div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
                         {isSignUp ? "Create an Account" : "Welcome Back"}
